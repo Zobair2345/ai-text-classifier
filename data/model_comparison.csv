@@ -1,0 +1,4 @@
+Model,Validation Accuracy,Test Accuracy
+TF-IDF + Logistic Regression,91.90%,91.54%
+TF-IDF + Neural Network,92.28%,92.01%
+Embedding + Neural Network,92.15%,91.75%
