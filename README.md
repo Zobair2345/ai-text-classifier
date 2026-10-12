@@ -1,254 +1,216 @@
-# AI News Classification System
+# AI News Intelligence — DistilBERT News Classification
 
-This project is a news classification system that I built to explore different approaches to Natural Language Processing (NLP), starting with traditional machine learning and gradually moving towards neural networks and Transformer models.
+An end-to-end machine learning project that classifies news articles using a fine-tuned DistilBERT model. The application also collects news from RSS feeds, stores predictions in a database, and provides an interactive dashboard for exploring the results.
 
-The system classifies news articles into four categories:
+I started this project by comparing traditional machine learning and neural network approaches for text classification. I later extended it into a news intelligence application that can collect, classify, and organise news articles automatically.
 
-- World
-- Sports
-- Business
-- Sci/Tech
+## Features
 
-I used the AG News dataset for training and evaluation. The final version of the application uses a fine-tuned DistilBERT model and includes a simple Streamlit interface where users can enter their own news text and get a prediction.
+- **News classification:** Classifies headlines and text into World, Sports, Business, and Sci/Tech.
+- **DistilBERT model:** Uses a fine-tuned Transformer model trained on the AG News dataset.
+- **RSS integration:** Collects recent articles from BBC World, Business, and Technology feeds.
+- **Automated pipeline:** Processes collected headlines and predicts their categories.
+- **Duplicate prevention:** Skips articles that have already been saved.
+- **SQLite database:** Stores headlines, sources, article links, predictions, and confidence scores.
+- **Analytics dashboard:** Displays category distribution, article counts, filters, and prediction scores.
+- **Manual classification:** Allows users to enter their own news text.
+- **News refresh:** Provides a button to collect and classify new articles directly from the dashboard.
+- **Hourly scheduler:** Supports automatic news collection at hourly intervals while the scheduler is running.
 
----
+## Model Development
 
-## About the Project
+The project began with experiments using TF-IDF features and traditional machine learning models. I then explored neural networks before fine-tuning DistilBERT.
 
-I built this project step by step rather than starting directly with a Transformer model.
+The dataset used for training and evaluation was **AG News**, which contains four news categories.
 
-I first created a baseline using TF-IDF and Logistic Regression. I then experimented with neural networks using both TF-IDF features and learned word embeddings.
+### Model Performance
 
-Finally, I moved to a pretrained Transformer and fine-tuned DistilBERT for the same classification task.
+| Model | Validation Accuracy |
+|---|---:|
+| TF-IDF + Logistic Regression | 91.90% |
+| TF-IDF + Neural Network | 92.28% |
+| Learned Embedding Neural Network | 92.15% |
+| Fine-tuned DistilBERT | 92.10% |
 
-The project currently includes:
+The fine-tuned DistilBERT model achieved **91.49% accuracy on the official AG News test set of 7,600 articles**.
 
-1. TF-IDF + Logistic Regression
-2. TF-IDF + Neural Network
-3. Word Embeddings + Neural Network
-4. Fine-tuned DistilBERT
-5. Streamlit web application
-
-This allowed me to compare traditional NLP techniques with modern transfer-learning approaches while understanding how each model processes text differently.
-
----
-
-## Models and Results
-
-### TF-IDF + Logistic Regression
-
-The first model uses TF-IDF to convert the news text into numerical features and Logistic Regression for classification.
-
-Validation accuracy: **91.90%**
-
-This provided a strong baseline despite being the simplest model in the project.
-
-### TF-IDF + Neural Network
-
-I then used the same TF-IDF features as input to a feed-forward neural network.
-
-Validation accuracy: **92.28%**
-
-This slightly improved the validation performance compared with Logistic Regression.
-
-### Word Embeddings + Neural Network
-
-For the next version, I moved away from manually generated TF-IDF features.
-
-The model learns 64-dimensional word embeddings during training and uses global average pooling to create an article representation before classification.
-
-Validation accuracy: **92.15%**
-
-Official test accuracy: **91.75%**
-
-This experiment helped me understand how learned word representations differ from TF-IDF features.
-
-### Fine-Tuned DistilBERT
-
-The final model uses DistilBERT, a pretrained Transformer model.
-
-Instead of training a language model from scratch, I fine-tuned the pretrained model using a balanced sample of 8,000 AG News articles.
-
-Validation accuracy: **92.10%**
-
-Official test accuracy: **91.49%**
-
-Official test loss: **0.2523**
-
-Although DistilBERT did not produce the highest accuracy in this experiment, it achieved competitive performance using only 8,000 fine-tuning examples.
-
-This was also an important part of the project because it introduced transfer learning and contextual word representations.
-
----
-
-## DistilBERT Test Analysis
-
-I evaluated the fine-tuned DistilBERT model on the official AG News test set containing 7,600 unseen articles.
-
-| Category | Correct Predictions | Class Accuracy |
-|---|---:|---:|
-| World | 1,719 / 1,900 | 90.47% |
-| Sports | 1,856 / 1,900 | 97.68% |
-| Business | 1,684 / 1,900 | 88.63% |
-| Sci/Tech | 1,694 / 1,900 | 89.16% |
-
-Sports was the easiest category for the model to identify, with an accuracy of 97.68%.
-
-The largest source of error was between Business and Sci/Tech. The model classified 158 Business articles as Sci/Tech and 160 Sci/Tech articles as Business.
-
-This makes sense because these categories often overlap. For example, an article about a technology company launching a new product could contain both business and technology-related language.
-
----
-
-## Web Application
-
-After training and evaluating the models, I created a Streamlit application so that the classifier could be used outside of a Jupyter Notebook.
-
-Users can enter a news headline or article, and the application:
-
-- processes the text using the DistilBERT tokenizer
-- sends the tokens through the fine-tuned model
-- predicts one of the four news categories
-- displays the confidence score for each category
-
-For example:
-
-**Input**
-
-> Apple announced a new artificial intelligence platform for its devices.
-
-**Prediction**
-
-> Sci/Tech
-
-The confidence values shown by the application are model outputs and should not be interpreted as fact-checking probabilities. The application classifies the topic of the text; it does not determine whether a news story is true or false.
-
----
+The learned embedding neural network achieved 91.75% test accuracy. Although DistilBERT did not outperform that model in this experiment, it provided an opportunity to work with Transformer fine-tuning, tokenisation, PyTorch inference, and model integration.
 
 ## Technologies Used
 
-The project uses:
+| Area | Technologies |
+|---|---|
+| Programming | Python |
+| Machine Learning | Scikit-learn, PyTorch |
+| NLP | Hugging Face Transformers, DistilBERT |
+| Data Processing | Pandas |
+| News Collection | Feedparser, BBC RSS |
+| Database | SQLite |
+| Web Application | Streamlit |
+| Scheduling | APScheduler |
+| Version Control | Git, GitHub |
 
-- Python
-- PyTorch
-- Hugging Face Transformers
-- TensorFlow / Keras
-- Scikit-learn
-- Pandas
-- NumPy
-- Matplotlib
-- Streamlit
-- Jupyter Notebook
-- Git and GitHub
+## How the Application Works
 
----
+The application has two main sections.
+
+### 1. News Classifier
+
+Users can enter a news headline or article into the application.
+
+The text is processed by the fine-tuned DistilBERT model, which predicts one of four news categories and returns a probability score for each category.
+
+### 2. News Analytics Dashboard
+
+The dashboard displays news articles collected from BBC RSS feeds.
+
+Users can:
+
+- View the number of saved articles.
+- Explore the distribution of predicted categories.
+- Filter articles by category.
+- Review model prediction scores.
+- Open original news articles.
+- Refresh the news collection manually.
+
+The application also includes a separate scheduler that can run the collection pipeline every hour.
+
+### News Processing Pipeline
+
+1. Retrieve articles from the configured RSS feeds.
+2. Check for duplicate article links.
+3. Skip articles already stored in SQLite.
+4. Classify new headlines using DistilBERT.
+5. Save predictions and article information.
+6. Display the saved results in Streamlit.
+
+This approach avoids repeatedly classifying articles that have already been processed.
 
 ## Project Structure
 
 ```text
 ai-text-classifier/
-│
 ├── app.py
-│
-├── notebooks/
-│   ├── 01_tfidf_classification.ipynb
-│   ├── 02_embedding_classification.ipynb
-│   └── 03_bert_classification.ipynb
-│
 ├── src/
-│   └── predict.py
-│
+│   ├── predict.py
+│   ├── news_collector.py
+│   ├── news_pipeline.py
+│   ├── database.py
+│   └── scheduler.py
 ├── models/
 │   └── distilbert_agnews/
-│
 ├── data/
+│   └── news.db
 ├── requirements.txt
 ├── .gitignore
 └── README.md
 ```
 
-The trained model files are currently excluded from the Git repository because of their size.
+The structure above highlights the main application components. The repository also contains code used during model development and experimentation.
 
----
+The trained model files and local SQLite database are excluded from GitHub.
 
 ## Running the Project Locally
 
-Clone the repository:
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Zobair2345/ai-text-classifier.git
 cd ai-text-classifier
 ```
 
-Create a virtual environment:
+### 2. Create a virtual environment
 
 ```bash
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 ```
 
-Install the dependencies:
+### 3. Install dependencies
 
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
-Run the Streamlit application:
+### 4. Set up the trained model
+
+The application currently expects the fine-tuned model and tokenizer files inside:
+
+```text
+models/distilbert_agnews/
+```
+
+These files are not included in the GitHub repository, so they must be provided separately before running inference.
+
+### 5. Start the web application
 
 ```bash
 python -m streamlit run app.py
 ```
 
-The fine-tuned DistilBERT weights are currently stored locally and are not included in the GitHub repository, so the application requires the trained model files to run.
+Open the local address shown in the terminal, usually:
 
----
+```text
+http://localhost:8501
+```
+
+### 6. Run the news collection pipeline
+
+```bash
+python -m src.news_pipeline
+```
+
+This collects recent RSS articles, classifies new headlines, and stores their results in SQLite.
+
+### 7. Start hourly collection
+
+```bash
+python -m src.scheduler
+```
+
+The scheduler runs an initial collection and then checks for new articles every hour.
+
+The terminal must remain running, and the computer must stay awake for scheduled jobs to execute.
+
+**Note:** On some macOS installations, HTTPS certificate configuration may be required to access RSS feeds.
+
+## Current Limitations
+
+The project is currently designed to run locally.
+
+- The trained model weights are not yet hosted publicly.
+- The SQLite database is stored locally.
+- The scheduler only runs while its Python process is active.
+- News classification is based on RSS headlines rather than full article content.
+- Model confidence scores do not represent verified classification accuracy or news credibility.
+- The model was evaluated on AG News, so performance on current BBC headlines may differ.
+
+## Future Improvements
+
+The next stage is to make the application accessible online.
+
+Planned improvements include:
+
+- Hosting the trained DistilBERT model on Hugging Face Hub.
+- Deploying the Streamlit application.
+- Adding persistent cloud database storage.
+- Running news collection through a cloud-based scheduled job.
+- Expanding the number of news sources.
+- Improving dashboard visualisations and historical trends.
+- Exploring article summarisation and more advanced NLP features.
 
 ## What I Learned
 
-This project gave me practical experience with several stages of an NLP workflow.
+This project helped me understand how a machine learning model can become part of a complete application rather than remaining inside a notebook.
 
-I worked with TF-IDF, Logistic Regression, neural networks, word embeddings and Transformer models rather than focusing on only one approach.
+I gained practical experience with text preprocessing, model comparison, Transformer fine-tuning, inference pipelines, external data collection, database integration, automation, and interactive visualisation.
 
-Some of the main areas I worked with include:
-
-- text preprocessing
-- TF-IDF feature extraction
-- multiclass classification
-- neural networks for text classification
-- learned word embeddings
-- training and validation workflows
-- overfitting and early stopping
-- Transformer tokenization
-- contextual embeddings
-- transfer learning
-- DistilBERT fine-tuning
-- PyTorch inference
-- model evaluation
-- confusion matrices
-- building reusable prediction code
-- creating a simple ML application with Streamlit
-
-One of the main things I learned from the project is that a more complex model does not automatically produce better results. Model performance also depends on the amount of training data, the task, computational requirements and how the model is trained.
-
----
-
-## Next Steps
-
-There are several areas I would like to explore further:
-
-- fine-tuning DistilBERT using more of the AG News training dataset
-- comparing other pretrained Transformer models
-- improving confidence calibration
-- deploying the Streamlit application online
-- supporting batch classification
-- creating an API for the classifier
-
----
+It also helped me understand that a more complex model does not automatically guarantee better performance, which became clear when comparing DistilBERT against the simpler embedding-based neural network.
 
 ## Author
 
-**Zobair Abduallah**
+**Zobair Abdullah**
 
-Computer Science graduate, majoring in Big Data and Artificial Intelligence.
+Bachelor of Computer Science — Big Data and AI
 
-Currently continuing to build practical projects in machine learning, NLP, AI and LLM-based systems.
+GitHub: https://github.com/Zobair2345
